@@ -1,0 +1,19 @@
+[App]
+name = "Productivity Tracker API"
+env = "local"
+port = 4001
+
+[Database]
+driver = "postgres"
+host = "localhost"
+port = 5432
+username = "devpostgres"
+password = "devpostgres"
+name = ""
+
+[Logger]
+driver = "mongodb"
+host = "localhost"
+port = 27017
+password = "test saja"
+Dbnumber = 2
