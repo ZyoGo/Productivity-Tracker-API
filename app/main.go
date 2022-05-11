@@ -9,9 +9,15 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"github.com/w33h/Productivity-Tracker-API/config"
+	"github.com/w33h/Productivity-Tracker-API/util"
 )
 
 func main() {
+	// Init config
+	cfg := config.GetConfig()
+	_ = util.NewPostgresConnection(cfg)
+
 	// Echo instance
 	e := echo.New()
 
@@ -36,7 +42,7 @@ func main() {
 	<-quit
 
 	// timeout to wait for server shutdown
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	// Shutdown server
