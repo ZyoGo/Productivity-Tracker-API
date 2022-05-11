@@ -9,7 +9,7 @@ host = "localhost"
 port = 5432
 username = "devpostgres"
 password = "devpostgres"
-name = ""
+name = "gorm"
 
 [Logger]
 driver = "mongodb"

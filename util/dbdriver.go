@@ -39,7 +39,7 @@ func NewConnectionDB(config *config.AppConfig) *DatabaseConfig {
 	switch config.Database.Driver {
 	case "postgres":
 		dbConfig.Driver = Postgres
-		dbConfig.PostgreSQL = newPostgresConnection(config)
+		dbConfig.PostgreSQL = NewPostgresConnection(config)
 	case "mongodb":
 		dbConfig.Driver = MongoDB
 		dbConfig.mongoClient = newMongoDBClient(config)
@@ -51,14 +51,15 @@ func NewConnectionDB(config *config.AppConfig) *DatabaseConfig {
 	return &dbConfig
 }
 
-func newPostgresConnection(config *config.AppConfig) *gorm.DB {
+func NewPostgresConnection(config *config.AppConfig) *gorm.DB {
 	var uri string
-	uri = fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable connect_timeout=10 timezone=Asia/Makassar",
+	uri = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Makassar",
 		config.Database.Host,
-		config.Database.Port,
 		config.Database.Username,
+		config.Database.Password,
 		config.Database.Name,
-		config.Database.Password)
+		config.Database.Port,
+	)
 
 	db, err := gorm.Open(postgres.Open(uri), &gorm.Config{})
 
