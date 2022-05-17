@@ -1,8 +1,6 @@
 package user
 
 import (
-	"fmt"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/w33h/Productivity-Tracker-API/business/users/spec"
 )
@@ -11,7 +9,7 @@ type RepositoryUser interface {
 	FindById(id string) (result *Users, err error)
 	InsertUser(user Users) (id Users, err error)
 	UpdateUser(user *Users) (err error)
-	DeleteUser(id string) (err error)
+	DeleteUser(id string) error
 }
 
 type ServiceUser interface {
@@ -84,8 +82,6 @@ func (s *userService) UpdateUser(userSpec spec.UpsertUserSpec, id string) (err e
 
 func (s *userService) DeleteUser(id string) (err error) {
 	err = s.userRepo.DeleteUser(id)
-	fmt.Println("id delete = ", id)
-	fmt.Println("err id delete = ", err)
 
 	if err != nil {
 		return err
