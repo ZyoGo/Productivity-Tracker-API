@@ -11,9 +11,9 @@ username = "devpostgres"
 password = "devpostgres"
 name = "gorm"
 
-[Logger]
-driver = "mongodb"
-host = "localhost"
-port = 27017
-password = "test saja"
-Dbnumber = 2
+# [Logger]
+# driver = "mongodb"
+# host = "localhost"
+# port = 27017
+# password = "test saja"
+# Dbnumber = 2
