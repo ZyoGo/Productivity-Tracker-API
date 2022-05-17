@@ -1,7 +1,7 @@
 package user
 
 import (
-	user "github.com/w33h/Productivity-Tracker-API/business/users"
+	domain "github.com/w33h/Productivity-Tracker-API/business/users"
 	"gorm.io/gorm"
 )
 
@@ -9,46 +9,42 @@ type userRepository struct {
 	db *gorm.DB
 }
 
-func NewUserRepository(db *gorm.DB) user.RepositoryUser {
+func NewUserRepository(db *gorm.DB) domain.RepositoryUser {
 	return &userRepository{
 		db,
 	}
 }
 
-func (r *userRepository) Get(id int32) (result *user.Users, err error) {
-	err = r.db.Where("Id = ?", id).Error
-
-	if err != nil {
+func (r *userRepository) FindById(id string) (result *domain.Users, err error) {
+	if err = r.db.Where("Id = ?", id).First(&result).Error; err != nil {
 		return nil, err
 	}
 
-	result.Id = int64(id)
+	result.Id = id
 
 	return result, nil
 }
 
-func (r *userRepository) Create(user user.Users) (id user.Users, err error) {
+func (r *userRepository) InsertUser(user domain.Users) (id domain.Users, err error) {
 	err = r.db.Create(&user).Error
 
 	if err != nil {
 		return id, err
 	}
 
-	return id, nil
+	return user, nil
 }
 
-func (r *userRepository) Update(user user.Users) (result user.Users, err error) {
-	err = r.db.Save(&user).Error
-
-	if err != nil {
-		return result, err
+func (r *userRepository) UpdateUser(user *domain.Users) (err error) {
+	if err = r.db.Save(&user).Error; err != nil {
+		return err
 	}
 
-	return result, nil
+	return nil
 }
 
-func (r *userRepository) Delete(id int32) (err error) {
-	err = r.db.Delete(id).Error
+func (r *userRepository) DeleteUser(id string) (err error) {
+	err = r.db.Where("id = ?", id).First(domain.Users{}).Delete(domain.Users{}).Error
 
 	if err != nil {
 		return err

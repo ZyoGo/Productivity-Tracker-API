@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/w33h/Productivity-Tracker-API/api"
+	modules "github.com/w33h/Productivity-Tracker-API/app/module"
 	"os"
 	"os/signal"
 	"time"
@@ -16,7 +18,11 @@ import (
 func main() {
 	// Init config
 	cfg := config.GetConfig()
-	_ = util.NewPostgresConnection(cfg)
+
+	dbCon := util.NewConnectionDB(cfg)
+	defer dbCon.Close()
+
+	controllers := modules.RegisterModules(dbCon, cfg)
 
 	// Echo instance
 	e := echo.New()
@@ -25,6 +31,8 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")
 	})
+
+	api.RegistrationPath(e, controllers)
 
 	// Start server with go routine
 	go func() {

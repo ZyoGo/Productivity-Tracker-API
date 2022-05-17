@@ -9,18 +9,20 @@ type UserRepositoryMock struct {
 	Mock mock.Mock
 }
 
-func (m *UserRepositoryMock) Get(id int32) (result *domain.Users, err error) {
+func (m *UserRepositoryMock) FindById(id string) (result *domain.Users, err error) {
 	args := m.Mock.Called(id)
 
 	if args.Get(0) == nil {
-		return result, err
+		return nil, err
 	}
 
-	result = args.Get(0).(*domain.Users)
+	// result = args.Get(0).(*domain.Users)
+	user := args.Get(0).(domain.Users)
+	result = &user
 	return result, nil
 }
 
-func (m *UserRepositoryMock) Create(user domain.Users) (id domain.Users, err error) {
+func (m *UserRepositoryMock) InsertUser(user domain.Users) (id domain.Users, err error) {
 	args := m.Mock.Called(user)
 
 	if args.Get(0) == nil {
@@ -31,17 +33,17 @@ func (m *UserRepositoryMock) Create(user domain.Users) (id domain.Users, err err
 	return id, nil
 }
 
-func (m *UserRepositoryMock) Update(user domain.Users) (result domain.Users, err error) {
+func (m *UserRepositoryMock) UpdateUser(user *domain.Users) (err error) {
 	args := m.Mock.Called(user)
 
 	if args.Get(0) == nil {
-		return result, err
+		return err
 	}
 
-	return result, nil
+	return nil
 }
 
-func (m *UserRepositoryMock) Delete(id int32) (err error) {
+func (m *UserRepositoryMock) DeleteUser(id string) (err error) {
 	args := m.Mock.Called(id)
 
 	if args.Get(0) == nil {
