@@ -3,6 +3,7 @@ package util
 import (
 	"context"
 	"fmt"
+	user "github.com/w33h/Productivity-Tracker-API/business/users"
 
 	"github.com/labstack/gommon/log"
 	"github.com/w33h/Productivity-Tracker-API/config"
@@ -65,6 +66,10 @@ func NewPostgresConnection(config *config.AppConfig) *gorm.DB {
 
 	if err != nil {
 		log.Info("failed to connect database: ", err)
+		panic(err)
+	}
+
+	if err := db.AutoMigrate(&user.Users{}); err != nil {
 		panic(err)
 	}
 
