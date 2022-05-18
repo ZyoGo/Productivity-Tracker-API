@@ -44,7 +44,7 @@ func (r *userRepository) UpdateUser(user *domain.Users) (err error) {
 }
 
 func (r *userRepository) DeleteUser(id string) (err error) {
-	err = r.db.Where("id = ?", id).First(domain.Users{}).Delete(domain.Users{}).Error
+	err = r.db.Where("Id = ?", id).First(&domain.Users{}).Delete(&domain.Users{}).Error
 
 	if err != nil {
 		return err
