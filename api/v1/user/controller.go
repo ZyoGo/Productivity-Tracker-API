@@ -27,7 +27,7 @@ func (controller *Controller) GetUserById(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, f.InternalServerErrorResponse(err.Error()))
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, f.SuccessResponse(user))
 }
 
 func (controller *Controller) CreateUser(c echo.Context) error {
