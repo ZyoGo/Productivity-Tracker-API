@@ -2,14 +2,15 @@ package user_test
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"github.com/w33h/Productivity-Tracker-API/business/users/spec"
 	"github.com/w33h/Productivity-Tracker-API/repository/users/mocks"
-	"testing"
-	"time"
 
 	user "github.com/w33h/Productivity-Tracker-API/business/users"
 )
@@ -17,14 +18,14 @@ import (
 type UnitTestSuite struct {
 	suite.Suite
 	userService user.ServiceUser
-	userMock *mocks.RepositoryUser
+	userMock    *mocks.RepositoryUser
 }
 
 func TestUnitTestSuite(t *testing.T) {
 	suite.Run(t, &UnitTestSuite{})
 }
 
-func (s *UnitTestSuite) SetupTest()  {
+func (s *UnitTestSuite) SetupTest() {
 	userMocks := mocks.RepositoryUser{}
 	userServices := user.NewUserService(&userMocks)
 
@@ -32,35 +33,35 @@ func (s *UnitTestSuite) SetupTest()  {
 	s.userMock = &userMocks
 }
 
-func (s *UnitTestSuite) TestUserService_Delete_Success()  {
-		s.userMock.On("DeleteUser", mock.Anything).Return(nil)
-		err := s.userService.DeleteUser("1")
+func (s *UnitTestSuite) TestUserService_Delete_Success() {
+	s.userMock.On("DeleteUser", mock.Anything).Return(nil)
+	err := s.userService.DeleteUser("1")
 
-		assert.NoError(s.T(), err)
+	assert.NoError(s.T(), err)
 }
 
-func (s *UnitTestSuite) TestUserService_Delete_Failed()  {
+func (s *UnitTestSuite) TestUserService_Delete_Failed() {
 	s.userMock.On("DeleteUser", mock.Anything).Return(errors.New("Failed"))
 	err := s.userService.DeleteUser("1")
 
 	assert.Error(s.T(), err)
 }
 
-func (s *UnitTestSuite) TestUserService_Create_Success()  {
+func (s *UnitTestSuite) TestUserService_Create_Success() {
 	validRequest := user.Users{
-					Id:          uuid.New().String(),
-					Username:    "userA@gmail.com",
-					Password:    "userA123",
-					PhoneNumber: +6280000000000,
-					CreatedAt:   time.Now(),
-					LastLogin:   time.Now(),
-					Deleted:     false,
-				}
+		Id:          uuid.New().String(),
+		Username:    "userA@gmail.com",
+		Password:    "userA123",
+		PhoneNumber: +6280000000000,
+		CreatedAt:   time.Now(),
+		LastLogin:   time.Now(),
+		Deleted:     false,
+	}
 	userSpec := spec.UpsertUserSpec{
-					Username:    "userA@gmail.com",
-					Password:    "userA123",
-					PhoneNumber: +6280000000000,
-				}
+		Username:    "userA@gmail.com",
+		Password:    "userA123",
+		PhoneNumber: +6280000000000,
+	}
 
 	s.userMock.On("InsertUser", mock.Anything).Return(validRequest, nil)
 	result, err := s.userService.CreateUser(userSpec)
@@ -69,7 +70,7 @@ func (s *UnitTestSuite) TestUserService_Create_Success()  {
 	assert.NotNil(s.T(), result)
 }
 
-func (s *UnitTestSuite) TestUserService_Create_InternalServerFailed()  {
+func (s *UnitTestSuite) TestUserService_Create_InternalServerFailed() {
 	invalidRequest := user.Users{}
 	userSpec := spec.UpsertUserSpec{
 		Username:    "userA@gmail.com",
@@ -84,7 +85,7 @@ func (s *UnitTestSuite) TestUserService_Create_InternalServerFailed()  {
 	assert.NotNil(s.T(), result)
 }
 
-func (s *UnitTestSuite) TestUserService_Create_BadRequest()  {
+func (s *UnitTestSuite) TestUserService_Create_BadRequest() {
 	invalidRequest := user.Users{
 		Id:          "1",
 		Username:    "userA@gmail.com",
