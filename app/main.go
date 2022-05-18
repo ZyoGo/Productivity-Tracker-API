@@ -36,7 +36,7 @@ func main() {
 
 	// Start server with go routine
 	go func() {
-		address := fmt.Sprintf(":%d", 8080)
+		address := fmt.Sprintf(":%d", cfg.App.Port)
 		if err := e.Start(address); err != nil {
 			log.Info("shutting down the server")
 		}
