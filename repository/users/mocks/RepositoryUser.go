@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	testing "testing"
+	//testing "testing"
 
 	mock "github.com/stretchr/testify/mock"
 
@@ -88,11 +88,11 @@ func (_m *RepositoryUser) UpdateUser(_a0 *user.Users) error {
 }
 
 // NewRepositoryUser creates a new instance of RepositoryUser. It also registers the testing.TB interface on the mock and a cleanup function to assert the mocks expectations.
-func NewRepositoryUser(t testing.TB) *RepositoryUser {
-	mock := &RepositoryUser{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
-}
+//func NewRepositoryUser(t testing.TB) *RepositoryUser {
+//	mock := &RepositoryUser{}
+//	mock.Mock.Test(t)
+//
+//	t.Cleanup(func() { mock.AssertExpectations(t) })
+//
+//	return mock
+//}
