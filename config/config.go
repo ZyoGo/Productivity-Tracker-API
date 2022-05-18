@@ -53,7 +53,7 @@ func GetConfig() *AppConfig {
 func initConfig() *AppConfig {
 	viper.SetConfigType("toml")
 	viper.SetConfigName("config")
-	viper.AddConfigPath("../config/")
+	viper.AddConfigPath("./config/")
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Info("error to read file config ", err)
