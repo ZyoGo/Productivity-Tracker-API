@@ -22,7 +22,7 @@ func main() {
 	dbCon := util.NewConnectionDB(cfg)
 	defer dbCon.Close()
 
-	controllers := modules.RegisterModules(dbCon, cfg)
+	controllers := modules.RegisterModules(dbCon)
 
 	// Echo instance
 	e := echo.New()
