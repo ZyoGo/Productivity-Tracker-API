@@ -2,6 +2,8 @@ package user_test
 
 import (
 	"errors"
+	"fmt"
+	"github.com/w33h/Productivity-Tracker-API/exception"
 	"testing"
 	"time"
 
@@ -149,16 +151,26 @@ func (s *UnitTestSuite) TestUserService_Update_Success() {
 }
 
 func (s *UnitTestSuite) TestUserService_Update_Failed_InternalServerFailed() {
+	invalidRequest := user.Users{
+		Id:          "1",
+		Username:    "userA@gmail.com",
+		Password:    "userA123",
+		PhoneNumber: +6280000000000,
+		CreatedAt:   time.Now(),
+		LastLogin:   time.Now(),
+		Deleted:     false,
+	}
 	userSpec := spec.UpsertUserSpec{
 		Username:    "userA@gmail.com",
 		Password:    "userA123",
 		PhoneNumber: +6280000000000,
 	}
 
-	s.userMock.On("FindById", mock.Anything).Return(nil, errors.New("id not found"))
-	s.userMock.On("UpdateUser", mock.Anything).Return(nil)
+	s.userMock.On("FindById", mock.Anything).Return(&invalidRequest, nil)
+	s.userMock.On("UpdateUser", mock.Anything).Return(exception.ErrInternalServer)
 
 	err := s.userService.UpdateUser(userSpec, "1")
+	fmt.Println("error = ", err)
 
 	assert.Error(s.T(), err)
 }
@@ -183,6 +195,22 @@ func (s *UnitTestSuite) TestUserService_Update_Failed_BadRequest() {
 	s.userMock.On("UpdateUser", mock.Anything).Return(errors.New("bad request"))
 
 	err := s.userService.UpdateUser(userSpec, "1")
+
+	assert.Error(s.T(), err)
+}
+
+func (s *UnitTestSuite) TestUserService_Update_Failed_InvalidId() {
+	userSpec := spec.UpsertUserSpec{
+		Username:    "userA@gmail.com",
+		Password:    "userA123",
+		PhoneNumber: +6280000000000,
+	}
+
+	s.userMock.On("FindById", mock.Anything).Return(nil, exception.ErrNotFound)
+	s.userMock.On("UpdateUser", mock.Anything).Return(errors.New("bad request"))
+
+	err := s.userService.UpdateUser(userSpec, "1")
+	fmt.Println("error = ", err)
 
 	assert.Error(s.T(), err)
 }
