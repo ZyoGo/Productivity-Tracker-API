@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/w33h/Productivity-Tracker-API/api"
 	modules "github.com/w33h/Productivity-Tracker-API/app/module"
-	"os"
-	"os/signal"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -44,7 +44,7 @@ func main() {
 
 	// Wait for interrupt signal to gracefully shutdown server
 	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
+	// signal.Notify(quit, os.Interrupt)
 
 	// Block until we receive our signal
 	<-quit
