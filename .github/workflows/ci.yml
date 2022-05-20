@@ -2,7 +2,7 @@ name: Build Productivity-Trakcer-API App
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build-app:
