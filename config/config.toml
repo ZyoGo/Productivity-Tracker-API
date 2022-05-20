@@ -5,8 +5,8 @@ port = 4011
 
 [Database]
 driver = "postgres"
-# dburl = "postgres://devpostgres:devpostgres@localhost:5432/gorm"
-dburl = "postgres://devpostgres:devpostgres@productivity-trakcer-db:5432/gorm"
+dburl = "postgres://devpostgres:devpostgres@localhost:5432/gorm"
+# dburl = "postgres://devpostgres:devpostgres@productivity-trakcer-db:5432/gorm"
 
 # [Logger]
 # driver = "mongodb"
