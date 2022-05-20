@@ -12,5 +12,9 @@ var (
 	//ErrZeroAffected Data not found
 	ErrNotFound = errors.New("No record affected")
 
+	//ErrInternalServer Error when internal server error
 	ErrInternalServer = errors.New("Internal server error")
+
+	//ErrUnauthorized Error when unauthorized
+	ErrUnauthorized = errors.New("Unauthorized")
 )

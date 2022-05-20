@@ -1,15 +1,12 @@
 [App]
 name = "Productivity Tracker API"
 env = "local"
-port = 4001
+port = 4011
 
 [Database]
 driver = "postgres"
-host = "localhost"
-port = 5432
-username = "devpostgres"
-password = "devpostgres"
-name = "gorm"
+# dburl = "postgres://devpostgres:devpostgres@localhost:5432/gorm"
+dburl = "postgres://devpostgres:devpostgres@productivity-trakcer-db:5432/gorm"
 
 # [Logger]
 # driver = "mongodb"

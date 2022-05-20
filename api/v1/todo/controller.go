@@ -3,6 +3,7 @@ package todo
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/w33h/Productivity-Tracker-API/api/middleware"
 	"github.com/w33h/Productivity-Tracker-API/api/v1/todo/request"
 	domain "github.com/w33h/Productivity-Tracker-API/business/todos"
 	"github.com/w33h/Productivity-Tracker-API/exception"
@@ -19,17 +20,18 @@ func NewController(service domain.ServiceTodos) *Controller {
 }
 
 func (controller *Controller) CreateTodo(c echo.Context) error {
-	createTodoRequest := new(request.CreateRequestTodo)
-	if err := c.Bind(createTodoRequest); err != nil {
+	userId, _ := middleware.ExtractToken(c)
+
+	createRequestTodo := new(request.CreateRequestTodo)
+	createRequestTodo.UserId = userId
+
+	if err := c.Bind(createRequestTodo); err != nil {
 			return c.JSON(http.StatusBadRequest, f.BadRequestResponse(err.Error()))
 	}
 
-	fmt.Println("createtodorequest = ", createTodoRequest)
+	req := *createRequestTodo.ToSpecTodo()
 
-	req := *createTodoRequest.ToSpecTodo()
-	fmt.Println("req = ", req)
-
-	id, err := controller.service.CreateTodo(req)
+	id, err := controller.service.CreateTodo(req, userId)
 	if err != nil {
 		if err == exception.ErrNotFound {
 			return c.JSON(http.StatusNotFound, f.NotFoundResponse(err.Error()))
@@ -45,7 +47,11 @@ func (controller *Controller) CreateTodo(c echo.Context) error {
 }
 
 func (controller *Controller) UpdateTodo(c echo.Context) error {
+	userId, _ := middleware.ExtractToken(c)
+
 	createRequestTodo := new(request.CreateRequestTodo)
+	createRequestTodo.UserId = userId
+
 	if err := c.Bind(createRequestTodo); err != nil {
 		return c.JSON(http.StatusBadGateway, f.BadGatewayResponse(err))
 	}
@@ -55,11 +61,11 @@ func (controller *Controller) UpdateTodo(c echo.Context) error {
 	err := controller.service.UpdateTodo(*createRequestTodo.ToSpecTodo(),id)
 	if err != nil {
 		if err == exception.ErrInvalidSpec {
-			return c.JSON(http.StatusBadGateway, f.BadGatewayResponse(err))
+			return c.JSON(http.StatusBadGateway, f.BadGatewayResponse(err.Error()))
 		}else if err == exception.ErrNotFound{
-			return c.JSON(http.StatusNotFound, f.NotFoundResponse(err))
+			return c.JSON(http.StatusNotFound, f.NotFoundResponse(err.Error()))
 		}
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, f.InternalServerErrorResponse(err.Error()))
 	}
 
 	message := fmt.Sprintf("Success update Todo with id %v", id)
@@ -93,9 +99,13 @@ func (controller *Controller) GetByStatus(c echo.Context) error {
 
 func (controller *Controller) GetById(c echo.Context) error {
 	id := c.Param("id")
+	userId, _ := middleware.ExtractToken(c)
 
-	result, err := controller.service.GetById(id)
+	result, err := controller.service.GetById(userId, id)
 	if err != nil {
+		if err == exception.ErrUnauthorized {
+			return c.JSON(http.StatusUnauthorized, f.UnauthorizedResponse(err.Error()))
+		}
 		return c.JSON(http.StatusNotFound, f.NotFoundResponse(err))
 	}
 
@@ -103,7 +113,8 @@ func (controller *Controller) GetById(c echo.Context) error {
 }
 
 func (controller *Controller) GetAllTodo(c echo.Context) error {
-	result, err := controller.service.GetAllTodo()
+	userId, _ := middleware.ExtractToken(c)
+	result, err := controller.service.GetAllTodo(userId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, f.InternalServerErrorResponse(err))
 	}

@@ -30,7 +30,7 @@ func (_m *RepositoryTodos) DeleteTodo(id string) error {
 }
 
 // GetAllTodo provides a mock function with given fields:
-func (_m *RepositoryTodos) FindAllTodo() ([]todos.Todo, error) {
+func (_m *RepositoryTodos) FindAllTodo(userId string) ([]todos.Todo, error) {
 	ret := _m.Called()
 
 	var r0 []todos.Todo

@@ -2,12 +2,11 @@ package user
 
 import (
 	"fmt"
-	f "github.com/w33h/formatter-response"
-	"net/http"
-
 	"github.com/labstack/echo/v4"
 	"github.com/w33h/Productivity-Tracker-API/api/v1/user/request"
 	domain "github.com/w33h/Productivity-Tracker-API/business/users"
+	f "github.com/w33h/formatter-response"
+	"net/http"
 )
 
 type Controller struct {
@@ -24,7 +23,7 @@ func (controller *Controller) GetUserById(c echo.Context) error {
 	user, err := controller.service.GetById(c.Param("id"))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, f.InternalServerErrorResponse(err.Error()))
+		return c.JSON(http.StatusNotFound, f.NotFoundResponse(err.Error()))
 	}
 
 	return c.JSON(http.StatusOK, f.SuccessResponse(user))
@@ -37,7 +36,7 @@ func (controller *Controller) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, f.BadRequestResponse(err))
 	}
 
-	req := *createUserRequest.ToSpecUser()
+	req := *createUserRequest.ToSpecCreateUser()
 
 	result, err := controller.service.CreateUser(req)
 
@@ -58,7 +57,7 @@ func (controller *Controller) UpdateUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, f.BadRequestResponse(err))
 	}
 
-	req := *createUserRequest.ToSpecUser()
+	req := *createUserRequest.ToSpecCreateUser()
 
 	err := controller.service.UpdateUser(req, id)
 

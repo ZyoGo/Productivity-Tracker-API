@@ -13,16 +13,17 @@ type RepositoryTodos interface {
 	DeleteTodo(id string) (err error)
 	FindByStatus(status string) (todo []Todo, err error)
 	FindById(id string) (todo *Todo, err error)
-	FindAllTodo() (todo []Todo, err error)
+	FindAllTodo(userId string) (todo []Todo, err error)
 }
 
 type ServiceTodos interface {
-	CreateTodo(specTodo spec.UpsertTodosSpec) (id string, err error)
-	UpdateTodo(specTodo spec.UpsertTodosSpec, id string) (err error)
+	CreateTodo(specTodo spec.UpsertTodosSpec, userId string) (id string, err error)
+	UpdateTodo(specTodo spec.UpsertTodosSpec, userId string) (err error)
 	DeleteTodo(id string) (err error)
 	GetByStatus(status string) (todo []Todo, err error)
-	GetById(id string) (todo *Todo, err error)
-	GetAllTodo() (todo []Todo, err error)
+	GetById(userId, id string) (todo *Todo, err error)
+	GetAllTodo(userId string) (todo []Todo, err error)
+	CheckAuthorization(userId, id string) (err error)
 }
 
 type todoService struct {
@@ -39,18 +40,18 @@ func NewTodoService(repoTodo RepositoryTodos, repoUser user.RepositoryUser) Serv
 	}
 }
 
-func (s *todoService) CreateTodo(specTodo spec.UpsertTodosSpec) (id string, err error) {
+func (s *todoService) CreateTodo(specTodo spec.UpsertTodosSpec, userId string) (id string, err error) {
 	err = s.validate.Struct(specTodo)
 	if err != nil {
-		return id, exception.ErrInvalidSpec
+		return id, err
 	}
 
-	_, err = s.userRepo.FindById(specTodo.UserId)
+	_, err = s.userRepo.FindById(userId)
 	if err != nil {
 		return id, exception.ErrNotFound
 	}
 
-	newTodo := NewTodos(specTodo.Status, specTodo.Content, specTodo.UserId)
+	newTodo := NewTodos(specTodo.Status, specTodo.Content, userId)
 
 	id, err = s.todoRepo.InsertTodo(newTodo)
 	if err != nil {
@@ -60,13 +61,13 @@ func (s *todoService) CreateTodo(specTodo spec.UpsertTodosSpec) (id string, err 
 	return id, nil
 }
 
-func (s *todoService) UpdateTodo(specTodo spec.UpsertTodosSpec, id string) (err error) {
+func (s *todoService) UpdateTodo(specTodo spec.UpsertTodosSpec, userId string) (err error) {
 	err = s.validate.Struct(specTodo)
 	if err != nil {
 		return exception.ErrInvalidSpec
 	}
 
-	oldTodo, err := s.todoRepo.FindById(id)
+	oldTodo, err := s.todoRepo.FindById(userId)
 	if err != nil {
 		return exception.ErrNotFound
 	}
@@ -99,20 +100,32 @@ func (s *todoService) GetByStatus(status string) (todo []Todo, err error) {
 	return todo, nil
 }
 
-func (s *todoService) GetById(id string) (todo *Todo, err error) {
+func (s *todoService) GetById(userId, id string) (todo *Todo, err error) {
 	todo, err = s.todoRepo.FindById(id)
 	if err != nil {
 		return nil, exception.ErrNotFound
 	}
 
+	if err = s.CheckAuthorization(userId, todo.UserId); err != nil {
+		return nil, exception.ErrUnauthorized
+	}
+
 	return todo, nil
 }
 
-func (s *todoService) GetAllTodo() (todo []Todo, err error) {
-	todo, err = s.todoRepo.FindAllTodo()
+func (s *todoService) GetAllTodo(userId string) (todo []Todo, err error) {
+	todo, err = s.todoRepo.FindAllTodo(userId)
 	if err != nil {
 		return nil, exception.ErrInternalServer
 	}
 
 	return todo, nil
+}
+
+func (s *todoService) CheckAuthorization(userId, id string) (err error) {
+	if userId != id {
+		return exception.ErrUnauthorized
+	}
+
+	return nil
 }

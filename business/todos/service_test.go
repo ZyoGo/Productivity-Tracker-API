@@ -37,8 +37,18 @@ func (s *UnitTestSuite) SetupTest() {
 }
 
 func (s *UnitTestSuite) TestTodoService_GetById_Success() {
-	s.todoMock.On("FindById", "1").Return(&todos.Todo{}, nil)
-	result, err := s.todoService.GetById("1")
+	responseMock := todos.Todo{
+		Id:        uuid.New().String(),
+		UserId:    "5e0efcb7-9176-4526-a5a4-b82a0e1f4b1e",
+		Status:    "InProgress",
+		Content:   "A",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Deleted:   false,
+	}
+	s.todoMock.On("FindById", mock.Anything).Return(&responseMock, nil)
+	result, err := s.todoService.GetById("5e0efcb7-9176-4526-a5a4-b82a0e1f4b1e", responseMock.UserId)
+	fmt.Println("error =", err)
 
 	assert.NoError(s.T(), err)
 	assert.NotNil(s.T(), result)
@@ -46,7 +56,7 @@ func (s *UnitTestSuite) TestTodoService_GetById_Success() {
 
 func (s *UnitTestSuite) TestTodoService_GetById_Failed_InvalidID() {
 	s.todoMock.On("FindById", "1").Return(nil, exception.ErrNotFound)
-	result, err := s.todoService.GetById("1")
+	result, err := s.todoService.GetById("1", "1")
 
 	assert.Error(s.T(), err)
 	assert.Nil(s.T(), result)
@@ -94,7 +104,7 @@ func (s *UnitTestSuite) TestTodoService_GetAllTodo_Success() {
 		},
 		{
 			Id:        "2",
-			UserId:    "ba7ae1fd-ce80-450c-b68b-8a2502ee5283",
+			UserId:    "5e0efcb7-9176-4526-a5a4-b82a0e1f4b1e",
 			Status:    "Completed",
 			Content:   "B",
 			CreatedAt: time.Now(),
@@ -103,7 +113,7 @@ func (s *UnitTestSuite) TestTodoService_GetAllTodo_Success() {
 		},
 	}
 	s.todoMock.On("FindAllTodo", mock.Anything).Return(responseMock, nil)
-	result, err := s.todoService.GetAllTodo()
+	result, err := s.todoService.GetAllTodo("5e0efcb7-9176-4526-a5a4-b82a0e1f4b1e")
 
 	assert.NoError(s.T(), err)
 	assert.NotNil(s.T(), result)
@@ -111,7 +121,7 @@ func (s *UnitTestSuite) TestTodoService_GetAllTodo_Success() {
 
 func (s *UnitTestSuite) TestTodoService_GetAllTodo_Failed_NotFoundTodo() {
 	s.todoMock.On("FindAllTodo", mock.Anything).Return(nil, exception.ErrNotFound)
-	result, err := s.todoService.GetAllTodo()
+	result, err := s.todoService.GetAllTodo("1")
 
 	assert.Error(s.T(), err)
 	assert.Nil(s.T(), result)
@@ -150,7 +160,7 @@ func (s *UnitTestSuite) TestTodoService_CreateTodo_Success() {
 	s.userMock.On("FindById", mock.Anything).Return(nil, nil)
 	s.todoMock.On("InsertTodo", mock.Anything).Return(responseMock.Id, nil)
 
-	result, err := s.todoService.CreateTodo(specTodo)
+	result, err := s.todoService.CreateTodo(specTodo, responseMock.UserId)
 
 	assert.NoError(s.T(), err)
 	assert.NotNil(s.T(), result)
@@ -175,7 +185,7 @@ func (s *UnitTestSuite) TestTodoService_CreateTodo_Failed_InvalidSpec() {
 	s.userMock.On("FindById", mock.Anything).Return(nil, nil)
 	s.todoMock.On("InsertTodo", mock.Anything).Return(responseMock.Id, nil)
 
-	result, err := s.todoService.CreateTodo(specTodo)
+	result, err := s.todoService.CreateTodo(specTodo, responseMock.UserId)
 
 	assert.Error(s.T(), err)
 	assert.NotNil(s.T(), result)
@@ -200,7 +210,7 @@ func (s *UnitTestSuite) TestTodoService_CreateTodo_Failed_IdNotFound() {
 	s.userMock.On("FindById", mock.Anything).Return(nil, exception.ErrNotFound)
 	s.todoMock.On("InsertTodo", mock.Anything).Return(responseMock.Id, nil)
 
-	result, err := s.todoService.CreateTodo(specTodo)
+	result, err := s.todoService.CreateTodo(specTodo, responseMock.UserId)
 
 	assert.Error(s.T(), err)
 	assert.NotNil(s.T(), result)
@@ -225,7 +235,7 @@ func (s *UnitTestSuite) TestTodoService_CreateTodo_Failed_InternalServerError() 
 	s.userMock.On("FindById", mock.Anything).Return(nil, nil)
 	s.todoMock.On("InsertTodo", mock.Anything).Return(responseMock.Id, exception.ErrInternalServer)
 
-	result, err := s.todoService.CreateTodo(specTodo)
+	result, err := s.todoService.CreateTodo(specTodo, responseMock.UserId)
 
 	assert.Error(s.T(), err)
 	assert.NotNil(s.T(), result)

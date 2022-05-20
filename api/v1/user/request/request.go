@@ -8,7 +8,7 @@ type CreateRequestUser struct {
 	PhoneNumber int64  `json:"phone_number" validate:"number"`
 }
 
-func (req *CreateRequestUser) ToSpecUser() *spec.UpsertUserSpec {
+func (req *CreateRequestUser) ToSpecCreateUser() *spec.UpsertUserSpec {
 	return &spec.UpsertUserSpec{
 		Username:    req.Username,
 		Password:    req.Password,

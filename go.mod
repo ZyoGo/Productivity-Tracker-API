@@ -2,7 +2,12 @@ module github.com/w33h/Productivity-Tracker-API
 
 go 1.17
 
-require github.com/go-playground/validator/v10 v10.10.1
+require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-playground/validator/v10 v10.10.1
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/w33h/formatter-response v1.0.2
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -39,7 +44,6 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	github.com/w33h/formatter-response v1.0.2 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.0.2 // indirect
 	github.com/xdg-go/stringprep v1.0.2 // indirect

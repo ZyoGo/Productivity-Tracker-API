@@ -1,7 +1,6 @@
 package user
 
 import (
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -22,11 +21,8 @@ func NewUser(
 	password string,
 	phoneNumber int64) Users {
 
-	id := uuid.New()
-	idString := strings.Replace(id.String(), "-", "", -1)
-
 	return Users{
-		Id:          idString,
+		Id:          uuid.New().String(),
 		Username:    username,
 		Password:    password,
 		PhoneNumber: phoneNumber,

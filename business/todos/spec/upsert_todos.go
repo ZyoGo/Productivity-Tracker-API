@@ -1,7 +1,7 @@
 package spec
 
 type UpsertTodosSpec struct {
-	UserId  string `json:"user_id" validate:"uuid4"`
-	Content string `json:"content"`
-	Status  string `json:"status"`
+	UserId  string `validate:"uuid4"`
+	Content string `validate:"required"`
+	Status  string `validate:"required"`
 }

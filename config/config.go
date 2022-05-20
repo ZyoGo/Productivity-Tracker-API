@@ -22,6 +22,7 @@ type AppConfig struct {
 		Username string `toml:"username"`
 		Password string `toml:"password"`
 		Name     string `toml:"name"`
+		DBUrl    string `toml:"dburl"`
 	} `toml:"Database"`
 	// Logger
 	Logger struct {

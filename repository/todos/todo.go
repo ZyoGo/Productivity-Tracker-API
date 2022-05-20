@@ -55,8 +55,8 @@ func (r *todoRepository) FindById(id string) (todo *domain.Todo, err error) {
 	return todo, nil
 }
 
-func (r *todoRepository) FindAllTodo() (todo []domain.Todo, err error) {
-	if err = r.db.Where("deleted = ?", false).Find(&todo).Error; err != nil {
+func (r *todoRepository) FindAllTodo(userId string) (todo []domain.Todo, err error) {
+	if err = r.db.Where("deleted = ? AND user_id = ?", false, userId).Find(&todo).Error; err != nil {
 		return nil, err
 	}
 

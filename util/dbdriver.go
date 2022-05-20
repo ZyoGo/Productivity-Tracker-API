@@ -3,6 +3,8 @@ package util
 import (
 	"context"
 	"fmt"
+
+	"github.com/w33h/Productivity-Tracker-API/business/notes"
 	"github.com/w33h/Productivity-Tracker-API/business/todos"
 	user "github.com/w33h/Productivity-Tracker-API/business/users"
 
@@ -54,23 +56,17 @@ func NewConnectionDB(config *config.AppConfig) *DatabaseConfig {
 }
 
 func NewPostgresConnection(config *config.AppConfig) *gorm.DB {
-	var uri string
-	uri = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Makassar",
-		config.Database.Host,
-		config.Database.Username,
-		config.Database.Password,
-		config.Database.Name,
-		config.Database.Port,
-	)
+	// var uri string
+	dbUrl := config.Database.DBUrl
 
-	db, err := gorm.Open(postgres.Open(uri), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
 
 	if err != nil {
 		log.Info("failed to connect database: ", err)
 		panic(err)
 	}
 
-	if err := db.AutoMigrate(&user.Users{}, &todos.Todo{}); err != nil {
+	if err := db.AutoMigrate(&user.Users{}, &todos.Todo{}, &notes.Notes{}); err != nil {
 		panic(err)
 	}
 
